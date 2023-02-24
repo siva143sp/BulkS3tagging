@@ -1,9 +1,9 @@
 import boto3
 import csv
 import os
-os.environ['AWS_PROFILE'] = "736176406297-ADFS-MHF-EKSadmin"
+os.environ['AWS_PROFILE'] = "My-profile"
 os.environ['AWS_DEFAULT_REGION'] = "us-east-1"
-session = boto3.session.Session(profile_name='736176406297-ADFS-MHF-EKSadmin')
+session = boto3.session.Session(profile_name='my-profile')
 client = session.client('s3', 'us-east-1')
 s3 = boto3.client('s3', region_name='us-east-1')
 
