@@ -19,34 +19,34 @@ with open('tags.csv') as csvfile:
             if key != 'Bucket' and value:
                 new_tags.append({'Key': key, 'Value': value})
 
-        # Get existing tags for the bucket
+        #Get existing tags for the bucket
         try:
             existing_tags = s3.get_bucket_tagging(Bucket=bucket_name)['TagSet']
             logging.info(f"Existing tags for bucket {bucket_name}: {existing_tags}")
             
         except botocore.exceptions.ClientError as e:
              if e.response['Error']['Code'] == 'NoSuchTagSet':
-        # Bucket does not have tags yet
+        #Bucket does not have tags yet
                  existing_tags = []
              else:
-        # Log the error message and move on to the next bucket
+        #Log the error message and move on to the next bucket
                 logging.error(f"Error getting tags for bucket {bucket_name}: {str(e)}")
                 continue
             
-        # Merge existing and new tags
+        #Merge existing and new tags
         merged_tags = list(existing_tags)
         for tag in new_tags:
             existing_tag = next((t for t in merged_tags if t['Key'] == tag['Key']), None)
             if existing_tag:
-        # Replace existing tag with new value
+        #Replace existing tag with new value
                 existing_tag['Value'] = tag['Value']
             else:
-        # Add new tag to list
+        #Add new tag to list
                 merged_tags.append(tag)
-        # Update bucket tags
+        #Update bucket tags
         try:
             s3.put_bucket_tagging(Bucket=bucket_name, Tagging={'TagSet': merged_tags})
         except s3.exceptions.InvalidTag:
-            # InvalidTag error occurred, log the bucket name and move on to the next bucket
+            #InvalidTag error occurred, log the bucket name and move on to the next bucket
             logging.error(f"InvalidTag error for bucket {bucket_name}")
             continue
